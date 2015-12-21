@@ -1,12 +1,15 @@
 {application, wechat,
  [
-  {description, ""},
-  {vsn, "1"},
+  {description, "wechat cloud application."},
+  {vsn, "0.1.0"},
   {registered, []},
   {applications, [
                   kernel,
                   stdlib
                  ]},
   {mod, { wechat_app, []}},
-  {env, []}
+  {env, [
+      {http_port, 80},
+      {wechat_token, "123456"}
+  ]}
  ]}.

@@ -1,0 +1,2 @@
+rebar co
+erl -pa deps/*/ebin ebin -s wechat_app

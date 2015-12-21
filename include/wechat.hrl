@@ -1,0 +1,3 @@
+-define(LOG_INFO(Msg, Args), error_logger:info_msg(Msg, Args)).
+-define(LOG_WARNING(Msg, Args), error_logger:warning_msg(Msg, Args)).
+-define(LOG_ERROR(Msg, Args), error_logger:info_msg(Msg, Args)).
