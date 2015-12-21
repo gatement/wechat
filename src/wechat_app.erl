@@ -36,7 +36,8 @@ stop(_State) ->
 start_cowboy() ->
 	Dispatch = cowboy_router:compile([
 		{'_', [
-			{"/[...]", wechat_http_handler, []}
+			{"/callback", wechat_handler_callback, []},
+			{"/[...]", wechat_handler_page, []}
 		]}
 	]),
     {ok, Port} = application:get_env(wechat, http_port),

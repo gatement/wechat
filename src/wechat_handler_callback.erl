@@ -1,4 +1,4 @@
--module(wechat_http_handler).
+-module(wechat_handler_callback).
 -include("wechat.hrl").
 
 -export([init/3,
@@ -18,13 +18,12 @@ init(_Type, Req, []) ->
 	{ok, Req, undefined}.
 
 handle(Req, State) ->
-    {Method, Req1} = cowboy_req:method(Req),
-    {PathInfo, Req2} = cowboy_req:path_info(Req1),
-    {ok, Req3} = case {Method, PathInfo} of
-        {<<"GET">>, [<<"wechat">>, <<"callback">>]} ->
-            handle_wechat_callback(Req2);
+    {Method, Req2} = cowboy_req:method(Req),
+    {ok, Req3} = case Method of
+        <<"GET">> ->
+            handle_init(Req2);
         _ ->
-            ?LOG_INFO("got other req: method=~p, path=~p~n", [Method, PathInfo]),
+            ?LOG_INFO("got other req: method=~p~n", [Method]),
             handle_other(Req2)
     end,
     {ok, Req3, State}.
@@ -36,7 +35,7 @@ terminate(_Reason, _Req, _State) ->
 %% Handler functions
 %% ===================================================================
 
-handle_wechat_callback(Req) ->
+handle_init(Req) ->
     {SignatureBin, Req2} = cowboy_req:qs_val(<<"signature">>, Req),
     {TimestampBin, Req3} = cowboy_req:qs_val(<<"timestamp">>, Req2),
     {NonceBin, Req4} = cowboy_req:qs_val(<<"nonce">>, Req3),
@@ -55,7 +54,7 @@ handle_wechat_callback(Req) ->
 
 
 handle_other(Req) ->
-    cowboy_req:reply(404, [], <<"page not found.">>, Req).
+    cowboy_req:reply(404, [], <<"method is not allowed.">>, Req).
 
 %% ===================================================================
 %% Helper functions
@@ -75,10 +74,10 @@ verify_signature(SignatureBin, TimestampBin, NonceBin) ->
 
 -ifdef(TEST).
 
-set_loglevel_test_() ->
+module_test_() ->
     {foreach,
         fun() ->
-                error_logger:tty(true),
+                error_logger:tty(false),
                 
                 application:load(wechat),
                 application:set_env(wechat, http_port, 8080),
@@ -101,21 +100,16 @@ set_loglevel_test_() ->
                 error_logger:tty(true)
         end,
         [
-            {"GET: page not found",
+            {"GET: wechat callback",
                 fun() ->
-                        {ok,{{"HTTP/1.1",404,"Not Found"}, _Headers, "page not found."}} 
-                            = httpc:request("http://localhost:8080/"),
-                        {ok,{{"HTTP/1.1",404,"Not Found"}, _Headers, "page not found."}} 
-                            = httpc:request("http://localhost:8080/abc"),
+                        {ok, {{"HTTP/1.1",200,"OK"}, _, "1173434274695593183"}} = httpc:request("http://localhost:8080/callback?signature=88e6081f52fdf5e5c6eb13a1553fa5dfb16909fd&echostr=1173434274695593183&timestamp=1450686621&nonce=2095644193"),
+                        {ok,{{"HTTP/1.1",400,"Bad Request"}, _, "signature error."}} = httpc:request("http://localhost:8080/callback?signature=88e6081f52fdf5e5c6eb13a1553fa5dfb16909fd&echostr=1173434274695593183&timestamp=1450686622&nonce=2095644193"),
                         ok
                 end
             },
-            {"GET: wechat callback",
+            {"DELETE: method is not allowed",
                 fun() ->
-                        %?assertEqual(info, info),
-                        %{ok,{{"HTTP/1.1",200,"OK"}, _Headers, "ok"}} 
-                        Res  = httpc:request("http://localhost:8080/wechat/callback?signature=c372d4ab7a2be1f20a7292e87bfc74925ecd687f&echostr=6980454302888222583&timestamp=1450565495&nonce=1182489064"),
-                        ct:pal("res: ~p~n", [Res]),
+                        {ok, {{"HTTP/1.1",404,"Not Found"}, _, "method is not allowed."}} = httpc:request(delete, {"http://localhost:8080/callback", []}, [], []),
                         ok
                 end
             }
