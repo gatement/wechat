@@ -23,7 +23,7 @@ handle(Req, State) ->
         <<"GET">> ->
             handle_init(Req2);
         _ ->
-            ?LOG_INFO("got other req4: method=~p~n", [Method]),
+            ?LOG_INFO("got other req3: method=~p~n", [Method]),
             handle_other(Req2)
     end,
     {ok, Req3, State}.
