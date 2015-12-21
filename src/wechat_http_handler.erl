@@ -45,8 +45,10 @@ handle_wechat_callback(Req) ->
     case verify_signature(SignatureBin, TimestampBin, NonceBin) of
         true ->
             Res = EchostrBin,
+            ?LOG_INFO("verify signature succeeded.~n", []),
             cowboy_req:reply(200, [], Res, Req5);
         false ->
+            ?LOG_INFO("verify signature fauled.~n", []),
             Res = <<"signature error.">>,
             cowboy_req:reply(400, [], Res, Req5)
     end.
