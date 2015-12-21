@@ -39,6 +39,7 @@ start_cowboy() ->
 			{"/[...]", wechat_http_handler, []}
 		]}
 	]),
-	{ok, _} = cowboy:start_http(http, 100, [{port, 8080}], [
+    {ok, Port} = application:get_env(wechat, http_port),
+	{ok, _} = cowboy:start_http(http, 100, [{port, Port}], [
 		{env, [{dispatch, Dispatch}]}
 	]).
