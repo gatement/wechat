@@ -1,0 +1,9 @@
+ROOT=/data/app/wechat
+killall wechat
+rm -rf $ROOT
+mkdir -p $ROOT
+cp -a bin $ROOT/
+cp -a ebin $ROOT/
+cp -a deps $ROOT/
+cp sys.config.prod $ROOT/sys.config
+$ROOT/wechat

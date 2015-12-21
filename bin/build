@@ -1,0 +1,2 @@
+bin/rebar update-deps
+bin/rebar compile

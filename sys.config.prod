@@ -1,0 +1,14 @@
+[
+    {kernel, [
+        {error_logger, {file, "/var/log/wechat/kernel.log"}},
+        {inet_dist_listen_min, 20000}, % fix distributed erlang listening port
+        {inet_dist_listen_max, 20000}
+    ]},
+    {sasl, [
+        {sasl_error_logger, {file, "/var/log/wechat/sasl.log"}},
+        {errlog_type, error}
+    ]},
+    {wechat, [
+        {http_port, 80}
+    ]}
+].

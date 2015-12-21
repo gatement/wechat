@@ -1,2 +1,0 @@
-rebar co
-erl -pa deps/*/ebin ebin -config sys -s wechat_app

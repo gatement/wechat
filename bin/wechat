@@ -1,0 +1,2 @@
+ROOT=$(cd ${0%/*} && pwd)
+erl -detached -pa $ROOT/deps/*/ebin $ROOT/ebin -config sys -s wechat_app

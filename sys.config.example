@@ -1,11 +1,11 @@
 [
     %{kernel, [
-    %    {error_logger, {file, "/var/log/gizwits/m2m_core/kernel.log"}},
-    %    {inet_dist_listen_min, 20000}, % limit distributed erlang listening port
+    %    {error_logger, {file, "/var/log/wechat/kernel.log"}},
+    %    {inet_dist_listen_min, 20000}, % fix distributed erlang listening port
     %    {inet_dist_listen_max, 20000}
     %]},
     %{sasl, [
-    %    {sasl_error_logger, {file, "/var/log/gizwits/m2m_core/sasl.log"}},
+    %    {sasl_error_logger, {file, "/var/log/wechat/sasl.log"}},
     %    {errlog_type, error}
     %]},
     {wechat, [
