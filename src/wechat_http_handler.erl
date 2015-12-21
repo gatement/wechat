@@ -65,8 +65,9 @@ verify_signature(SignatureBin, TimestampBin, NonceBin) ->
     {ok, Token} = application:get_env(wechat, wechat_token),
     Sorted = lists:sort([Token, binary_to_list(TimestampBin), binary_to_list(NonceBin)]),
     SignatureBin2 = crypto:hash(sha, string:join(Sorted, "")),
-    ?LOG_INFO("signature2=~p, token=~p, sorted=~p~n", [SignatureBin2, Token, Sorted]),
-    SignatureBin =:= SignatureBin2.
+    SignatureBin3 = list_to_binary(lists:flatten([io_lib:format("~2.16.0b", [X]) || <<X:8>> <= SignatureBin2])),
+    ?LOG_INFO("signature2=~p, token=~p, sorted=~p~n", [SignatureBin3, Token, Sorted]),
+    SignatureBin =:= SignatureBin3.
 
 %% ===================================================================
 %% Eunit Tests
