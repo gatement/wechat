@@ -9,7 +9,7 @@
                  ]},
   {mod, { wechat_app, []}},
   {env, [
-      {http_port, 8080},
+      {http_port, 80},
       {wechat_token, "123456"}
   ]}
  ]}.
