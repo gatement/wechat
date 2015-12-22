@@ -1,5 +1,5 @@
 ROOT=/data/app/wechat
-killall wechat
+killall wechat || echo 'nothing to kill'
 rm -rf $ROOT
 mkdir -p $ROOT
 cp -a bin $ROOT/
