@@ -6,4 +6,4 @@ cp -a bin $ROOT/
 cp -a ebin $ROOT/
 cp -a deps $ROOT/
 cp sys.config.prod $ROOT/sys.config
-$ROOT/wechat
+$ROOT/bin/wechat
