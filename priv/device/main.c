@@ -1,7 +1,8 @@
 #include <stdio.h>
+#include "main.h"
 #include "airkiss.h"
 
 int main(void)
 {
-   printf("abc\n"); 
+    printf("airkiss version: %s\n", airkiss_version()); 
 }
