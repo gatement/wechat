@@ -1,0 +1,1 @@
+gcc -o main -I airkiss -L airkiss -l airkiss_log main.c
