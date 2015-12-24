@@ -15,9 +15,9 @@ extern "C" {
 /*
  * 定义AIRKISS_ENABLE_CRYPT为1以启用AirKiss加密功能
  */
-#ifndef AIRKISS_ENABLE_CRYPT
-#define AIRKISS_ENABLE_CRYPT 1
-#endif
+//#ifndef AIRKISS_ENABLE_CRYPT
+//#define AIRKISS_ENABLE_CRYPT 1
+//#endif
 
 
 typedef void* (*airkiss_memset_fn) (void* ptr, int value, unsigned int num);
