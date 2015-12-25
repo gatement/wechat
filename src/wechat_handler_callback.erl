@@ -56,8 +56,14 @@ handle_post(Req) ->
     {ok, Body, Req2} = cowboy_req:body(Req),
     ?LOG_INFO("debug, body=~p~n", [Body]),
     {XmlElt, _} = xmerl_scan:string(binary_to_list(Body)),
-    [#xmlElement{content = #xmlText{value = MsgType}}]= xmerl_xpath:string("MsgType", XmlElt),
-    ?LOG_INFO("debug, msgtype=~p~n", [MsgType]),
+    [#xmlElement{content = [#xmlText{value = MsgType}]}]= xmerl_xpath:string("MsgType", XmlElt),
+    case MsgType of
+        "text" ->
+            [#xmlElement{content = [#xmlText{value = Content}]}]= xmerl_xpath:string("Content", XmlElt),
+            ?LOG_INFO("got msg, msgtype=~p, content=~p~n", [MsgType, Content]);
+        _ ->
+            ?LOG_INFO("got msg, msgtype=~p~n", [MsgType])
+    end,
     cowboy_req:reply(200, [], <<"">>, Req2).
 
 handle_other(Req) ->
