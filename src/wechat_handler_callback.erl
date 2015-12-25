@@ -62,7 +62,7 @@ handle_post(Req) ->
     case MsgType of
         "text" ->
             [#xmlElement{content = [#xmlText{value = Content}]}]= xmerl_xpath:string("Content", XmlElt),
-            ?LOG_INFO("got msg, msgtype=~p, tousername=~p, fromusername=~p, content=~p~n", [MsgType, ToUserName, FromUserName, Content]),
+            %?LOG_INFO("got msg, msgtype=~p, tousername=~p, fromusername=~p, content=~p~n", [MsgType, ToUserName, FromUserName, Content]),
             handle_msg_text(Req2, ToUserName, FromUserName, Content);
         _ ->
             ?LOG_INFO("got msg, msgtype=~p~n", [MsgType]),
@@ -88,7 +88,6 @@ handle_msg_text(Req, ToUserName, FromUserName, Content) ->
     RespXml = xmerl:export_simple_content([Resp], xmerl_xml),
     ?LOG_INFO("reply msg, xml=~p~n", [lists:flatten(RespXml)]),
     cowboy_req:reply(200, [], RespXml, Req).
-
 
 %% ===================================================================
 %% Helper functions
