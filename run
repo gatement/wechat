@@ -1,6 +1,6 @@
 ps aux | grep beam
-killall beam | echo 'nothing to kill'
+killall beam
 git pull
 bin/rebar compile
-erl -detached -pa $ROOT/deps/*/ebin $ROOT/ebin -config $ROOT/sys -s wechat_app
+erl -detached -pa deps/*/ebin ebin -config sys -s wechat_app
 ps aux | grep beam
