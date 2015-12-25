@@ -1,4 +1,5 @@
 -module(wechat_handler_callback).
+-include_lib("xmerl/include/xmerl.hrl").
 -include("wechat.hrl").
 
 -export([init/3,
@@ -54,10 +55,19 @@ handle_init(Req) ->
 handle_post(Req) ->
     {ok, Body, Req2} = cowboy_req:body(Req),
     ?LOG_INFO("debug, body=~p~n", [Body]),
+    {XmlElt, _} = xmerl_scan:string(binary_to_list(Body)),
+    [#xmlElement{content = MsgType}]= xmerl_xpath:string("/MsgType", XmlElt),
+    ?LOG_INFO("debug, msgtype=~p~n", [MsgType]),
     cowboy_req:reply(200, [], <<"">>, Req2).
 
 handle_other(Req) ->
     cowboy_req:reply(404, [], <<"method is not allowed.">>, Req).
+
+%% ===================================================================
+%% POST handlers
+%% ===================================================================
+
+
 
 %% ===================================================================
 %% Helper functions
