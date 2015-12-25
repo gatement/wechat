@@ -22,8 +22,10 @@ handle(Req, State) ->
     {ok, Req3} = case Method of
         <<"GET">> ->
             handle_init(Req2);
+        <<"POST">> ->
+            handle_post(Req2);
         _ ->
-            ?LOG_INFO("got other req2: method=~p~n", [Method]),
+            ?LOG_INFO("got other req: method=~p~n", [Method]),
             handle_other(Req2)
     end,
     {ok, Req3, State}.
@@ -52,6 +54,11 @@ handle_init(Req) ->
             cowboy_req:reply(400, [], Res, Req5)
     end.
 
+
+handle_post(Req) ->
+    ?LOG_INFO("debug, body=~p~n", [cowboy_req:body(Req)]),
+    cowboy_req:reply(200, [], <<"">>, Req).
+    ok.
 
 handle_other(Req) ->
     cowboy_req:reply(404, [], <<"method is not allowed.">>, Req).
