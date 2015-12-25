@@ -2,8 +2,8 @@
 #define _MAIN_H_  
 
 #define UDP_PORT 12476
-#define DEVICE_TYPE "wx7ba5597861fecd32"
-#define DEVICE_ID   "BD5D78991122"
+#define DEVICE_TYPE "gh_5a92d3949746"
+#define DEVICE_ID   "gh_5a92d3949746_b2f233a55779bbe9d326df34f7b16f00"
 
 #define ERR_EXIT(m) \
     do { \

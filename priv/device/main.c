@@ -68,8 +68,8 @@ void loop(int sock)
         } 
         else if(i > 0) 
         { 
-            print_buf(buf, i);
-            printf("\r\n"); 
+            //print_buf(buf, i);
+            //printf("\r\n"); 
 
             airkiss_lan_ret_t recv_ret = airkiss_lan_recv(buf, i, &akconf);
             if (recv_ret != AIRKISS_LAN_SSDP_REQ)
