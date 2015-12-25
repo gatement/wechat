@@ -66,7 +66,7 @@ handle_post(Req) ->
             handle_msg_text(Req2, ToUserName, FromUserName, Content);
         _ ->
             ?LOG_INFO("got msg, msgtype=~p~n", [MsgType]),
-            cowboy_req:reply(200, [], <<"">>, Req2)
+            cowboy_req:reply(200, [], <<"success">>, Req2)
     end.
 
 handle_other(Req) ->
@@ -77,7 +77,16 @@ handle_other(Req) ->
 %% ===================================================================
 
 handle_msg_text(Req, ToUserName, FromUserName, Content) ->
-    cowboy_req:reply(200, [], <<"success">>, Req).
+    Resp = {xml,  
+		[
+			{'ToUserName', [wechat_util:build_xml_text(FromUserName)]},
+			{'FromUserName', [wechat_util:build_xml_text(ToUserName)]},
+			{'CreateTime', [wechat_util:timestamp_string()]},
+			{'MsgType', [wechat_util:build_xml_text("text")]},
+			{'Content', [wechat_util:build_xml_text("lll")]}
+		]},
+    RespXml = xmerl:export_simple_content([Resp], xmerl_xml),
+    cowboy_req:reply(200, [], RespXml, Req).
 
 
 %% ===================================================================
