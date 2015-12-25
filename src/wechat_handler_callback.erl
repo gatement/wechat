@@ -57,6 +57,7 @@ handle_init(Req) ->
 
 handle_post(Req) ->
     ?LOG_INFO("debug, body=~p~n", [cowboy_req:body(Req)]),
+    ?LOG_INFO("debug, path=~p~n", [cowboy_req:path(Req)]),
     cowboy_req:reply(200, [], <<"">>, Req).
 
 handle_other(Req) ->
