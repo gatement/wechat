@@ -54,17 +54,18 @@ handle_init(Req) ->
 
 handle_post(Req) ->
     {ok, Body, Req2} = cowboy_req:body(Req),
-    ?LOG_INFO("debug, body=~p~n", [Body]),
+    ?LOG_INFO("got msg, body=~p~n", [Body]),
     {XmlElt, _} = xmerl_scan:string(binary_to_list(Body)),
     [#xmlElement{content = [#xmlText{value = MsgType}]}]= xmerl_xpath:string("MsgType", XmlElt),
     case MsgType of
         "text" ->
             [#xmlElement{content = [#xmlText{value = Content}]}]= xmerl_xpath:string("Content", XmlElt),
-            ?LOG_INFO("got msg, msgtype=~p, content=~p~n", [MsgType, Content]);
+            ?LOG_INFO("got msg, msgtype=~p, content=~p~n", [MsgType, Content]),
+            handle_msg_text(Req2, Content);
         _ ->
-            ?LOG_INFO("got msg, msgtype=~p~n", [MsgType])
-    end,
-    cowboy_req:reply(200, [], <<"">>, Req2).
+            ?LOG_INFO("got msg, msgtype=~p~n", [MsgType]),
+            cowboy_req:reply(200, [], <<"">>, Req2)
+    end.
 
 handle_other(Req) ->
     cowboy_req:reply(404, [], <<"method is not allowed.">>, Req).
@@ -73,6 +74,9 @@ handle_other(Req) ->
 %% POST handlers
 %% ===================================================================
 
+handle_msg_text(Req, Content) ->
+    Req.
+    %cowboy_req:reply(200, [], <<"">>, Req2).
 
 
 %% ===================================================================
