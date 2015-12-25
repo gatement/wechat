@@ -75,7 +75,7 @@ handle_other(Req) ->
 %% ===================================================================
 
 handle_msg_text(Req, Content) ->
-    Req.
+    {ok, Req}.
     %cowboy_req:reply(200, [], <<"">>, Req2).
 
 
