@@ -108,16 +108,14 @@ module_test_() ->
                 error_logger:tty(true)
         end,
         [
-            {"GET: wechat callback",
-                fun() ->
-                    {ok, {{"HTTP/1.1",200,"OK"}, _, "1173434274695593183"}} = httpc:request("http://localhost:8080/callback?signature=88e6081f52fdf5e5c6eb13a1553fa5dfb16909fd&echostr=1173434274695593183&timestamp=1450686621&nonce=2095644193"),
-                    {ok,{{"HTTP/1.1",400,"Bad Request"}, _, "signature error."}} = httpc:request("http://localhost:8080/callback?signature=88e6081f52fdf5e5c6eb13a1553fa5dfb16909fd&echostr=1173434274695593183&timestamp=1450686622&nonce=2095644193"),
-                    ok
-                end
-            },
-            {"DELETE: method is not allowed",
+            {"verify signature",
                 fun() ->
                     {ok,{{"HTTP/1.1",400,"Bad Request"}, _, "signature error."}} = httpc:request(delete, {"http://localhost:8080/callback", []}, [], []),
+
+                    {ok,{{"HTTP/1.1",400,"Bad Request"}, _, "signature error."}} = httpc:request("http://localhost:8080/callback?signature=88e6081f52fdf5e5c6eb13a1553fa5dfb16909fd&echostr=1173434274695593183&timestamp=1450686622&nonce=2095644193"),
+
+                    {ok, {{"HTTP/1.1",200,"OK"}, _, "1173434274695593183"}} = httpc:request("http://localhost:8080/callback?signature=88e6081f52fdf5e5c6eb13a1553fa5dfb16909fd&echostr=1173434274695593183&timestamp=1450686621&nonce=2095644193"),
+
                     ok
                 end
             }
