@@ -5,3 +5,4 @@ bin/rebar compile
 erl -detached -pa deps/*/ebin ebin -config sys -s wechat_app
 sleep 2
 ps aux | grep beam
+tailf log/kernel.log
