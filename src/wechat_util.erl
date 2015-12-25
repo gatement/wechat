@@ -2,8 +2,7 @@
 
 %% API
 -export([timestamp/0,
-         timestamp_string/0,
-         build_xml_text/1
+         timestamp_string/0
         ]).
 
 %% ===================================================================
@@ -16,9 +15,6 @@ timestamp() ->
 
 timestamp_string() ->
     integer_to_list(?MODULE:timestamp()).
-
-build_xml_text(Content) ->
-    io_lib:format("<![CDATA[~s]]>", [Content]).
 
 %% ===================================================================
 %% Helper functions
