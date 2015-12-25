@@ -57,8 +57,7 @@ handle_init(Req) ->
 
 handle_post(Req) ->
     ?LOG_INFO("debug, body=~p~n", [cowboy_req:body(Req)]),
-    cowboy_req:reply(200, [], <<"">>, Req),
-    ok.
+    cowboy_req:reply(200, [], <<"">>, Req).
 
 handle_other(Req) ->
     cowboy_req:reply(404, [], <<"method is not allowed.">>, Req).
