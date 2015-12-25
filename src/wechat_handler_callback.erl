@@ -64,9 +64,9 @@ handle_other(Req) ->
 %% ===================================================================
 
 verify_signature(Req) ->
-    {SignatureBin, _} = cowboy_req:qs_val(<<"signature">>, Req),
-    {TimestampBin, _} = cowboy_req:qs_val(<<"timestamp">>, Req),
-    {NonceBin, _} = cowboy_req:qs_val(<<"nonce">>, Req),
+    {SignatureBin, _} = cowboy_req:qs_val(<<"signature">>, Req, <<>>),
+    {TimestampBin, _} = cowboy_req:qs_val(<<"timestamp">>, Req, <<>>),
+    {NonceBin, _} = cowboy_req:qs_val(<<"nonce">>, Req, <<>>),
     %?LOG_INFO("signature=~p, ts=~p, nonce=~p~n", [SignatureBin, TimestampBin, NonceBin]),
     
     {ok, Token} = application:get_env(wechat, wechat_token),
@@ -110,15 +110,15 @@ module_test_() ->
         [
             {"GET: wechat callback",
                 fun() ->
-                        {ok, {{"HTTP/1.1",200,"OK"}, _, "1173434274695593183"}} = httpc:request("http://localhost:8080/callback?signature=88e6081f52fdf5e5c6eb13a1553fa5dfb16909fd&echostr=1173434274695593183&timestamp=1450686621&nonce=2095644193"),
-                        {ok,{{"HTTP/1.1",400,"Bad Request"}, _, "signature error."}} = httpc:request("http://localhost:8080/callback?signature=88e6081f52fdf5e5c6eb13a1553fa5dfb16909fd&echostr=1173434274695593183&timestamp=1450686622&nonce=2095644193"),
-                        ok
+                    {ok, {{"HTTP/1.1",200,"OK"}, _, "1173434274695593183"}} = httpc:request("http://localhost:8080/callback?signature=88e6081f52fdf5e5c6eb13a1553fa5dfb16909fd&echostr=1173434274695593183&timestamp=1450686621&nonce=2095644193"),
+                    {ok,{{"HTTP/1.1",400,"Bad Request"}, _, "signature error."}} = httpc:request("http://localhost:8080/callback?signature=88e6081f52fdf5e5c6eb13a1553fa5dfb16909fd&echostr=1173434274695593183&timestamp=1450686622&nonce=2095644193"),
+                    ok
                 end
             },
             {"DELETE: method is not allowed",
                 fun() ->
-                        {ok, {{"HTTP/1.1",404,"Not Found"}, _, "method is not allowed."}} = httpc:request(delete, {"http://localhost:8080/callback", []}, [], []),
-                        ok
+                    {ok,{{"HTTP/1.1",400,"Bad Request"}, _, "signature error."}} = httpc:request(delete, {"http://localhost:8080/callback", []}, [], []),
+                    ok
                 end
             }
         ]
