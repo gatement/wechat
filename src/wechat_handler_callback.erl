@@ -40,7 +40,7 @@ handle_init(Req) ->
     {TimestampBin, Req3} = cowboy_req:qs_val(<<"timestamp">>, Req2),
     {NonceBin, Req4} = cowboy_req:qs_val(<<"nonce">>, Req3),
     {EchostrBin, Req5} = cowboy_req:qs_val(<<"echostr">>, Req4),
-    ?LOG_INFO("signature=~p, ts=~p, nonce=~p, echostr=~p~n", [SignatureBin, TimestampBin, NonceBin, EchostrBin]),
+    %?LOG_INFO("signature=~p, ts=~p, nonce=~p, echostr=~p~n", [SignatureBin, TimestampBin, NonceBin, EchostrBin]),
     case verify_signature(SignatureBin, TimestampBin, NonceBin) of
         true ->
             Res = EchostrBin,
@@ -65,7 +65,7 @@ verify_signature(SignatureBin, TimestampBin, NonceBin) ->
     Sorted = lists:sort([Token, binary_to_list(TimestampBin), binary_to_list(NonceBin)]),
     SignatureBin2 = crypto:hash(sha, string:join(Sorted, "")),
     SignatureBin3 = list_to_binary(lists:flatten([io_lib:format("~2.16.0b", [X]) || <<X:8>> <= SignatureBin2])),
-    ?LOG_INFO("signature2=~p, token=~p, sorted=~p~n", [SignatureBin3, Token, Sorted]),
+    %?LOG_INFO("signature2=~p, token=~p, sorted=~p~n", [SignatureBin3, Token, Sorted]),
     SignatureBin =:= SignatureBin3.
 
 %% ===================================================================
