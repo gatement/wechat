@@ -88,7 +88,7 @@ handle_msg_text(Req, ToUserName, FromUserName, Content) ->
 			{'FromUserName', [ToUserName]},
 			{'CreateTime', [wechat_util:timestamp_string()]},
 			{'MsgType', ["text"]},
-			{'Content', ["lll"]}
+			{'Content', ["ll\nl\n32"]}
 		]},
     RespXml = xmerl:export_simple_content([Resp], xmerl_xml),
     ?LOG_INFO("reply msg, xml=~p~n", [lists:flatten(RespXml)]),
