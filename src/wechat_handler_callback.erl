@@ -57,11 +57,13 @@ handle_post(Req) ->
     ?LOG_INFO("got msg, body=~p~n", [Body]),
     {XmlElt, _} = xmerl_scan:string(binary_to_list(Body)),
     [#xmlElement{content = [#xmlText{value = MsgType}]}]= xmerl_xpath:string("MsgType", XmlElt),
+    [#xmlElement{content = [#xmlText{value = ToUserName}]}]= xmerl_xpath:string("ToUserName", XmlElt),
+    [#xmlElement{content = [#xmlText{value = FromUserName}]}]= xmerl_xpath:string("FromUserName", XmlElt),
     case MsgType of
         "text" ->
             [#xmlElement{content = [#xmlText{value = Content}]}]= xmerl_xpath:string("Content", XmlElt),
-            ?LOG_INFO("got msg, msgtype=~p, content=~p~n", [MsgType, Content]),
-            handle_msg_text(Req2, Content);
+            ?LOG_INFO("got msg, msgtype=~p, tousername=~p, fromusername=~p, content=~p~n", [MsgType, ToUserName, FromUserName, Content]),
+            handle_msg_text(Req2, ToUserName, FromUserName, Content);
         _ ->
             ?LOG_INFO("got msg, msgtype=~p~n", [MsgType]),
             cowboy_req:reply(200, [], <<"">>, Req2)
@@ -74,9 +76,8 @@ handle_other(Req) ->
 %% POST handlers
 %% ===================================================================
 
-handle_msg_text(Req, Content) ->
-    {ok, Req}.
-    %cowboy_req:reply(200, [], <<"">>, Req2).
+handle_msg_text(Req, ToUserName, FromUserName, Content) ->
+    cowboy_req:reply(200, [], <<"success">>, Req).
 
 
 %% ===================================================================
