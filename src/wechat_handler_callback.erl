@@ -42,7 +42,7 @@ handle_init(Req) ->
     {TimestampBin, Req3} = cowboy_req:qs_val(<<"timestamp">>, Req2),
     {NonceBin, Req4} = cowboy_req:qs_val(<<"nonce">>, Req3),
     {EchostrBin, Req5} = cowboy_req:qs_val(<<"echostr">>, Req4),
-    %?LOG_INFO("signature=~p, ts=~p, nonce=~p, echostr=~p~n", [SignatureBin, TimestampBin, NonceBin, EchostrBin]),
+    ?LOG_INFO("signature=~p, ts=~p, nonce=~p, echostr=~p~n", [SignatureBin, TimestampBin, NonceBin, EchostrBin]),
     case verify_signature(SignatureBin, TimestampBin, NonceBin) of
         true ->
             Res = EchostrBin,
