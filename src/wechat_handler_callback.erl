@@ -18,16 +18,24 @@ init(_Type, Req, []) ->
 	{ok, Req, undefined}.
 
 handle(Req, State) ->
-    {Method, Req2} = cowboy_req:method(Req),
-    {ok, Req3} = case Method of
-        <<"GET">> ->
-            handle_init(Req2);
-        <<"POST">> ->
-            handle_post(Req2);
-        _ ->
-            ?LOG_INFO("got other req: method=~p~n", [Method]),
-            handle_other(Req2)
+    {ok, Req3} = case verify_signature(Req) of
+        false ->
+            ?LOG_INFO("verify signature fauled.~n", []),
+            Res = <<"signature error.">>,
+            cowboy_req:reply(400, [], Res, Req);
+        true ->
+            {Method, Req2} = cowboy_req:method(Req),
+            case Method of
+                <<"GET">> ->
+                    handle_init(Req2);
+                <<"POST">> ->
+                    handle_post(Req2);
+                _ ->
+                    ?LOG_INFO("got other req: method=~p~n", [Method]),
+                    handle_other(Req2)
+            end
     end,
+
     {ok, Req3, State}.
 
 terminate(_Reason, _Req, _State) ->
@@ -38,32 +46,15 @@ terminate(_Reason, _Req, _State) ->
 %% ===================================================================
 
 handle_init(Req) ->
-    {SignatureBin, Req2} = cowboy_req:qs_val(<<"signature">>, Req),
-    {TimestampBin, Req3} = cowboy_req:qs_val(<<"timestamp">>, Req2),
-    {NonceBin, Req4} = cowboy_req:qs_val(<<"nonce">>, Req3),
-    {EchostrBin, Req5} = cowboy_req:qs_val(<<"echostr">>, Req4),
-    %?LOG_INFO("signature=~p, ts=~p, nonce=~p, echostr=~p~n", [SignatureBin, TimestampBin, NonceBin, EchostrBin]),
-    case verify_signature(SignatureBin, TimestampBin, NonceBin) of
-        true ->
-            Res = EchostrBin,
-            ?LOG_INFO("verify signature succeeded.~n", []),
-            cowboy_req:reply(200, [], Res, Req5);
-        false ->
-            ?LOG_INFO("verify signature fauled.~n", []),
-            Res = <<"signature error.">>,
-            cowboy_req:reply(400, [], Res, Req5)
-    end.
-
+    {EchostrBin, Req2} = cowboy_req:qs_val(<<"echostr">>, Req),
+    Res = EchostrBin,
+    ?LOG_INFO("verify signature succeeded.~n", []),
+    cowboy_req:reply(200, [], Res, Req2).
 
 handle_post(Req) ->
-    {SignatureBin, _} = cowboy_req:qs_val(<<"signature">>, Req),
-    {TimestampBin, _} = cowboy_req:qs_val(<<"timestamp">>, Req),
-    {NonceBin, _} = cowboy_req:qs_val(<<"nonce">>, Req),
-    {EchostrBin, _} = cowboy_req:qs_val(<<"echostr">>, Req),
-    ?LOG_INFO("signature=~p, ts=~p, nonce=~p, echostr=~p~n", [SignatureBin, TimestampBin, NonceBin, EchostrBin]),
-    ?LOG_INFO("debug, body=~p~n", [cowboy_req:body(Req)]),
-    ?LOG_INFO("debug, path=~p~n", [cowboy_req:path(Req)]),
-    cowboy_req:reply(200, [], <<"">>, Req).
+    {ok, Body, Req2} = cowboy_req:body(Req),
+    ?LOG_INFO("debug, body=~p~n", [Body]),
+    cowboy_req:reply(200, [], <<"">>, Req2).
 
 handle_other(Req) ->
     cowboy_req:reply(404, [], <<"method is not allowed.">>, Req).
@@ -72,7 +63,12 @@ handle_other(Req) ->
 %% Helper functions
 %% ===================================================================
 
-verify_signature(SignatureBin, TimestampBin, NonceBin) ->
+verify_signature(Req) ->
+    {SignatureBin, _} = cowboy_req:qs_val(<<"signature">>, Req),
+    {TimestampBin, _} = cowboy_req:qs_val(<<"timestamp">>, Req),
+    {NonceBin, _} = cowboy_req:qs_val(<<"nonce">>, Req),
+    %?LOG_INFO("signature=~p, ts=~p, nonce=~p~n", [SignatureBin, TimestampBin, NonceBin]),
+    
     {ok, Token} = application:get_env(wechat, wechat_token),
     Sorted = lists:sort([Token, binary_to_list(TimestampBin), binary_to_list(NonceBin)]),
     SignatureBin2 = crypto:hash(sha, string:join(Sorted, "")),
