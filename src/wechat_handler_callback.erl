@@ -65,7 +65,7 @@ handle_post(Req) ->
             %?LOG_INFO("got msg, msgtype=~p, tousername=~p, fromusername=~p, content=~p~n", [MsgType, ToUserName, FromUserName, Content]),
             handle_msg_text(Req2, ToUserName, FromUserName, Content);
         _ ->
-            ?LOG_INFO("got msg, msgtype=~p~n", [MsgType]),
+            ?LOG_INFO("unsupported msg, msgtype=~p~n", [MsgType]),
             cowboy_req:reply(200, [], <<"success">>, Req2)
     end.
 
